@@ -1,23 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-    FlatList,
-    ActivityIndicator,
-    SafeAreaView,
-    Alert,
-    Modal,
-    ScrollView,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CheckBox from '@react-native-community/checkbox';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Svg, { Circle } from 'react-native-svg';
 
-import {DRAW_URL, ROOMS_URL} from "@/constants/constants";
+import { API_URL, STORAGE_KEYS } from "@/constants/constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -31,20 +14,55 @@ export function todayDateISO() {
 }
 
 
-export async function fetchRooms() {
-    const res = await fetch(ROOMS_URL);
+export async function fetchVersion() {
+    const res = await fetch(`${API_URL}/pookie/version`);
+    if (!res.ok) throw new Error('Failed to fetch version');
+    const json = await res.json();
+    return json;
+}
+
+
+export async function fetchLocations() {
+    const res = await fetch(`${API_URL}/pookie/locations`);
     if (!res.ok) throw new Error('Failed to fetch rooms');
     const json = await res.json();
-    // Expecting array of strings, but keep defensive
+    return json;
+}
+
+
+export async function fetchRooms() {
+    const res = await fetch(`${API_URL}/pookie/roomnames?location=MIDA`);
+    if (!res.ok) throw new Error('Failed to fetch rooms');
+    const json = await res.json();
     return json;
 }
 
 
 export async function callDrawApi(roomsCsv: string) {
     const date = todayDateISO();
-    const res = await fetch(DRAW_URL + `?location=MIDA&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}`);
+    const res = await fetch(API_URL + `?location=MIDA&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}`);
     // Some servers expect POST; if your backend expects POST change accordingly.
-    if (!res.ok) throw new Error('Draw API failed');
+    if (!res.ok) throw new Error('Draw failed');
     const json = await res.json();
     return json; // expected { rooms:string, time: string, hole: string }
+}
+
+
+export async function hasLastDrawnResult() {
+    const lastResult: any = await AsyncStorage.getItem(STORAGE_KEYS.LAST_DRAW_RESULT);
+    if (!lastResult) {
+        return false;
+    }
+
+    // there is draw result, check date
+    const today = new Date();
+    let drawDate = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0));
+    drawDate.setUTCDate(drawDate.getUTCDate() + 1);
+    const lastDrawnDate = new Date(JSON.parse(lastResult).date);
+
+    if (lastDrawnDate.getTime() === drawDate.getTime()) {
+        return true;
+    }
+
+    return false;
 }

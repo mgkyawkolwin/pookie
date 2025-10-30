@@ -3,13 +3,13 @@ import {
 } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#090' },
+  container: { flex: 1, margin:0, padding:0, backgroundColor: '#000' },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   logo: { fontSize: 28, fontWeight: '800', marginBottom: 12 },
   header: { fontSize: 30, fontWeight: '600', marginTop: 0, paddingTop: 0, marginBottom: 12, color: '#fff' },
-  text: { fontSize: 20, fontWeight: '600', marginBottom: 12, color: '#ddd' },
-  resultText: { fontSize: 25, fontWeight: '600', color: '#ddd' },
-  flatListRow: { padding: 16, borderBottomWidth: 1, borderColor: '#000', backgroundColor: '#fff', alignItems: 'center', fontSize: 50 },
+  text: { fontSize: 20, fontWeight: '600', marginBottom: 12, color: '#000' },
+  resultText: { fontSize: 25, fontWeight: '600', color: '#000' },
+  flatListRow: { padding: 16, borderBottomWidth: 1, borderColor: '#000', backgroundColor: 'rgba(255,255,255,0.5)', alignItems: 'center', fontSize: 50 },
   flatListRowSelected: { backgroundColor: '#f5e97bff' },
   roomText: { fontSize: 30, fontWeight: '600' },
   roomTextSmall: { fontSize: 16 },
