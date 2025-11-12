@@ -19,8 +19,8 @@ export default function RootLayout() {
         <Stack.Screen name='chooseroom' options={{title:'객실 번호를 선택하세요',  headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
         <Stack.Screen name='choosefriend' options={{title:'친구들과 놀아요?', headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
         <Stack.Screen name='result' options={{title:'결과 화면', headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
-        <Stack.Screen name='resultexisting' options={{title:'결과 화면', headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
         <Stack.Screen name='chooselocation' options={{title:'골프 클럽', headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
+        <Stack.Screen name='authenticate' options={{title:'장치 인증', headerTransparent:true, headerStyle: {backgroundColor: '#000'}}} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

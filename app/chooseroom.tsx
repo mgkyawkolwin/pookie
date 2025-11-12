@@ -21,6 +21,7 @@ import { useRouter } from 'expo-router';
 export default function ChooseRoom() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [noOfPlayer, setNoOfPlayer] = useState(1);
     const [selected, setSelected] = useState<null | string>(null);
     const [selectedList, setSelectedList] = useState<string[]>([]);
 
@@ -33,7 +34,8 @@ export default function ChooseRoom() {
         (async () => {
             setLoading(true);
             try {
-                const data = await fetchRooms();
+                const location = await AsyncStorage.getItem(STORAGE_KEYS.LOCATION);
+                const data = await fetchRooms(location || '');
                 setRooms(data?.data?.roomNames);
             } catch (e: any) {
                 Alert.alert('Error', e.message || '객실을 로드하는 데 실패했습니다!');
@@ -49,6 +51,7 @@ export default function ChooseRoom() {
             Alert.alert("알 수 없는 객실 번호", "객실 번호를 선택해 주세요!");
         }
         await AsyncStorage.setItem(STORAGE_KEYS.SELECTED_ROOM, selected ?? '');
+        await AsyncStorage.setItem(STORAGE_KEYS.NO_OF_PLAYERS, String(noOfPlayer));
         //navigation.replace('DrawHole');
         router.push({ pathname: `/choosefriend`, params: { myRoom: selected } });
     };
@@ -80,8 +83,27 @@ export default function ChooseRoom() {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={styles.header}>객실 번호를 선택하세요</Text>
-                <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "60%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={rooms} renderItem={renderItem} keyExtractor={(i) => String(i)} />
+                <Text style={styles.header}>객실 번호와 플레이어 수를 선택해 주세요</Text>
+                <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "50%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={rooms} renderItem={renderItem} keyExtractor={(i) => String(i)} />
+                <View style={styles.footerRow}>
+                    <TouchableOpacity
+                        style={[styles.rectangleBtn, { backgroundColor: '#f7d308ff' }]}
+                        onPress={() => {
+                            if(noOfPlayer > 1) setNoOfPlayer(prev => prev - 1);
+                        }}
+                    >
+                        <Text style={styles.rectangleBtnText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={[styles.header, {paddingLeft: 10, paddingRight: 10}]}>{noOfPlayer} Player</Text>
+                    <TouchableOpacity
+                        style={[styles.rectangleBtn, { backgroundColor: '#f7d308ff' }]}
+                        onPress={() => {
+                            if(noOfPlayer < 4) setNoOfPlayer(prev => prev + 1);
+                        }}
+                    >
+                        <Text style={[styles.rectangleBtnText]}>+</Text>
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.footerRow}>
                     <TouchableOpacity
                         style={[styles.btn, { width: '100%', backgroundColor: selected ? '#f7d308ff' : '#999' }]}

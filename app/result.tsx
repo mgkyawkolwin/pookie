@@ -1,6 +1,6 @@
 import LoadingOverlay from '@/components/loadingoverlay';
 import { STORAGE_KEYS } from '@/constants/constants';
-import { callDrawApi, hasLastDrawnResult, todayDateISO } from '@/lib/utilities';
+import { callDrawApi, drawDateISO } from '@/lib/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageBackground } from 'expo-image';
 import React, { useEffect, useState } from 'react';
@@ -42,19 +42,8 @@ export default function ExplodeScreen() {
 
   useEffect(() => {
     (async () => {
-      if (await hasLastDrawnResult()) {
-        // show existing result
-        (async () => {
-          if (!result) {
-            const cached = await AsyncStorage.getItem(STORAGE_KEYS.LAST_DRAW_RESULT);
-            if (cached) setResult(JSON.parse(cached));
-            setLoading(false);
-            drawAnimation();
-          }
-        })();
-      } else {
-        performDraw();
-      }
+      performDraw();
+      return;
     })();
   }, []);
 
@@ -79,9 +68,11 @@ export default function ExplodeScreen() {
   const performDraw = async () => {
     try {
       const rooms = await AsyncStorage.getItem(STORAGE_KEYS.SELECTED_ROOM);
-      const response = await callDrawApi(rooms ?? '');
+      const location = await AsyncStorage.getItem(STORAGE_KEYS.LOCATION);
+      const noOfPlayer = Number(await AsyncStorage.getItem(STORAGE_KEYS.NO_OF_PLAYERS));
+      const response = await callDrawApi(location ?? '', rooms ?? '', noOfPlayer);
       // Save the draw result & date
-      await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_DATE, todayDateISO());
+      await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_DATE, drawDateISO());
       const result = response?.data?.timeTable;
       await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_RESULT, JSON.stringify(result));
       setLoading(false);
@@ -113,7 +104,7 @@ export default function ExplodeScreen() {
           <Text style={styles.resultText}>Time: {String(result?.time).substring(11, 16)}</Text>
           <Text style={styles.resultText}>Hole: {result?.hole}</Text>
           <Text style={styles.resultText}>Room (s): {result?.rooms}</Text>
-          <Text style={[styles.text, { paddingTop: 50 }]}>내일 아침 티오프 하실 때, 이 티 티켓을 직원에게 보여주시고 티오프를 시작하세요. 즐거운 라운드 되시길 바랍니다. 감사합니다.</Text>
+          <Text style={[styles.text, { paddingTop: 50 }]}>내일 오전 라운하실 때, 이 티켓을 직원에게 보여주시고 라운딩 시작하시면 됩니다. 즐거운 라운딩 되시길 바랍니다. 감사합니다.</Text>
         </View>
 
         <View style={StyleSheet.absoluteFill}>

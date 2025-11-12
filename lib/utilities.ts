@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
-export function todayDateISO() {
+export function drawDateISO() {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     const yyyy = d.getFullYear();
@@ -30,17 +30,18 @@ export async function fetchLocations() {
 }
 
 
-export async function fetchRooms() {
-    const res = await fetch(`${API_URL}/pookie/roomnames?location=MIDA`);
+export async function fetchRooms(location: string) {
+    const date = drawDateISO();
+    const res = await fetch(`${API_URL}/pookie/roomnames?location=${location}&drawDate=${encodeURIComponent(date)}`);
     if (!res.ok) throw new Error('Failed to fetch rooms');
     const json = await res.json();
     return json;
 }
 
 
-export async function callDrawApi(roomsCsv: string) {
-    const date = todayDateISO();
-    const res = await fetch(API_URL + `?location=MIDA&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}`);
+export async function callDrawApi(location: string, roomsCsv: string, noOfPeople: number) {
+    const date = drawDateISO();
+    const res = await fetch(API_URL + `/pookie/draw?location=${location}&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}&noOfPeople=${noOfPeople}`);
     // Some servers expect POST; if your backend expects POST change accordingly.
     if (!res.ok) throw new Error('Draw failed');
     const json = await res.json();

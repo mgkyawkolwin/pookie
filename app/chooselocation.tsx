@@ -20,6 +20,7 @@ import { useRouter } from 'expo-router';
 export default function ChooseLocation() {
     const [list, setList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [noOfPlayer, setNoOfPlayer] = useState(1);
     const [selectedItem, setSelectedItem] = useState<null | string>(null);
 
     const router = useRouter();
@@ -65,7 +66,7 @@ export default function ChooseLocation() {
     return (
         <SafeAreaView style={[styles.container]}>
             <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={styles.header}>골프 클럽을 선택하세요</Text>
+                <Text style={styles.header}>골프장을 선택해 주세요</Text>
                 <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "60%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={list} renderItem={renderItem} keyExtractor={(i) => String(i)} />
                 <View style={styles.footerRow}>
                     <TouchableOpacity

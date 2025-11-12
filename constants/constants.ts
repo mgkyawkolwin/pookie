@@ -1,18 +1,19 @@
 // DEVELOPMENT SERVER
-// export const API_URL = 'http://192.168.1.105:3000/api/public';
-// export const ROOMS_URL = 'http://192.168.1.105:3000/api/public/pookie/roomnames?location=MIDA';
-// export const DRAW_URL = 'http://192.168.1.105:3000/api/public/pookie/draw';
+export const API_URL = 'http://192.168.1.105:3000/api/public';
 
 // PRODUCTION SERVER
-export const API_URL = 'https://uat.power9inter.com/api/public';
+// export const API_URL = 'https://uat.power9inter.com/api/public';
 
 
 
 
 
 export const STORAGE_KEYS = {
-    SELECTED_ROOM: 'SELECTED_ROOM',
     LAST_DRAW_DATE: 'LAST_DRAW_DATE',
     LAST_DRAW_RESULT: 'LAST_DRAW_RESULT',
-    LOCATION: 'LOCATION'
+    LOCATION: 'LOCATION',
+    NO_OF_PLAYERS: 'NO_OF_PLAYERS',
+    QR_DATA: 'QR_DATA',
+    QR_EXPIRY_DATE: 'QR_EXPIRY_DATE',
+    SELECTED_ROOM: 'SELECTED_ROOM',
 };
