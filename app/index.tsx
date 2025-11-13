@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { API_URL, STORAGE_KEYS } from '@/constants/constants';
-import { fetchVersion } from '@/lib/utilities';
+import { fetchInfo } from '@/lib/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Application from 'expo-application';
 import { ImageBackground } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 
 
 export default function RoomSelectScreen() {
@@ -14,7 +14,7 @@ export default function RoomSelectScreen() {
     const router = useRouter();
     const { width, height } = Dimensions.get('window');
     const logoWidth = width * 0.8;
-    const logoHeight = logoWidth * (3 / 3);
+    const logoHeight = logoWidth * (1 / 3);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const [showVersionWarning, setShowVersionWarning] = useState(false);
 
@@ -29,12 +29,19 @@ export default function RoomSelectScreen() {
             // validate version
             const currentVer = Application.nativeApplicationVersion;
             const currentVersion = Number(currentVer?.replace(".", ""));
-            const serverVerResponse = await fetchVersion();
-            const serverVersion = Number(serverVerResponse.data.version.replace(".", ""));
-            if (serverVersion > currentVersion) {
-                setShowVersionWarning(true);
+            const response = await fetchInfo();
+            if(response.ok){
+                const responseData = await response.json();
+                const serverVersion = Number(responseData?.data.info.version.replace(".", ""));
+                if (serverVersion > currentVersion) {
+                    setShowVersionWarning(true);
+                    return;
+                }
+            }else{
+                Alert.alert('서버에서 데이터를 가져오지 못했습니다.');
                 return;
             }
+            
 
             // check for existing device authentication and expiration
             const qrData = await AsyncStorage.getItem(STORAGE_KEYS.QR_DATA);
@@ -94,7 +101,7 @@ export default function RoomSelectScreen() {
             >
                 <Animated.View style={{ opacity: fadeAnim }}>
                     <Image
-                        source={require("@/assets/images/logo-text-shadow.png")}
+                        source={require("@/assets/images/logo-text-shadow-gold.png")}
                         style={{
                             width: logoWidth,
                             height: logoHeight,

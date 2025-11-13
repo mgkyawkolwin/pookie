@@ -13,17 +13,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LoadingOverlay from '@/components/loadingoverlay';
 import { STORAGE_KEYS } from '@/constants/constants';
+import RoomAndPax from '@/lib/dto/RoomAndPax';
 import { styles } from "@/lib/styles";
 import { fetchRooms } from '@/lib/utilities';
 import { useRouter } from 'expo-router';
 
 
 export default function ChooseRoom() {
-    const [rooms, setRooms] = useState([]);
+    const [roomAndPaxs, setRoomAndPaxs] = useState<RoomAndPax[]>([]);
     const [loading, setLoading] = useState(false);
     const [noOfPlayer, setNoOfPlayer] = useState(1);
-    const [selected, setSelected] = useState<null | string>(null);
-    const [selectedList, setSelectedList] = useState<string[]>([]);
+    const [selected, setSelected] = useState<null | RoomAndPax>(null);
+    const [selectedList, setSelectedList] = useState<RoomAndPax[]>([]);
 
     const router = useRouter();
 
@@ -35,10 +36,15 @@ export default function ChooseRoom() {
             setLoading(true);
             try {
                 const location = await AsyncStorage.getItem(STORAGE_KEYS.LOCATION);
-                const data = await fetchRooms(location || '');
-                setRooms(data?.data?.roomNames);
+                const response = await fetchRooms(location || '');
+                const responseData = await response.json();
+                if(response.ok){
+                    setRoomAndPaxs(responseData?.data?.roomsAndPax);
+                }else{
+                    Alert.alert('객실을 로드하는 데 실패했습니다!');
+                }
             } catch (e: any) {
-                Alert.alert('Error', e.message || '객실을 로드하는 데 실패했습니다!');
+                Alert.alert(e.message || '객실을 로드하는 데 실패했습니다!');
             } finally {
                 setLoading(false);
             }
@@ -50,31 +56,22 @@ export default function ChooseRoom() {
         if (!selected) {
             Alert.alert("알 수 없는 객실 번호", "객실 번호를 선택해 주세요!");
         }
-        await AsyncStorage.setItem(STORAGE_KEYS.SELECTED_ROOM, selected ?? '');
-        await AsyncStorage.setItem(STORAGE_KEYS.NO_OF_PLAYERS, String(noOfPlayer));
+        await AsyncStorage.setItem(STORAGE_KEYS.SELECTED_ROOM, selected?.roomNo ?? '');
+        await AsyncStorage.setItem(STORAGE_KEYS.NO_OF_PLAYERS, String(selected?.noOfGuests));
         //navigation.replace('DrawHole');
-        router.push({ pathname: `/choosefriend`, params: { myRoom: selected } });
+        router.push({ pathname: `/choosefriend` });
     };
 
 
-    const toggleSelectedList = async (room: string) => {
-        const item = selectedList.find(s => s === room);
-        if (item)
-            setSelectedList(prev => prev.filter(s => s !== room));
-        else
-            setSelectedList(prev => [...prev, room]);
-    };
-
-
-    const renderItem = ({ item }: { item: string }) => {
+    const renderItem = ({ item }: { item: RoomAndPax }) => {
         //const isSelected: boolean = selectedList.find( s => s === item) ? true : false;
-        const isSelected: boolean = selected === item;
+        const isSelected: boolean = selected?.roomNo === item.roomNo;
         return (
             <TouchableOpacity
-                onPress={() => setSelected(selected === item ? '' : item)}
+                onPress={() => setSelected(selected?.roomNo === item.roomNo ? null : item)}
                 style={[styles.flatListRow, isSelected && styles.flatListRowSelected]}
             >
-                <Text style={styles.roomText}>{item}</Text>
+                <Text style={styles.roomText}>{item.roomNo} ({item.noOfGuests} Pax)</Text>
             </TouchableOpacity>
         );
     };
@@ -84,8 +81,8 @@ export default function ChooseRoom() {
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={styles.header}>객실 번호와 플레이어 수를 선택해 주세요</Text>
-                <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "50%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={rooms} renderItem={renderItem} keyExtractor={(i) => String(i)} />
-                <View style={styles.footerRow}>
+                <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "60%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={roomAndPaxs} renderItem={renderItem} keyExtractor={(i) => String(i.roomNo)} />
+                {/* <View style={styles.footerRow}>
                     <TouchableOpacity
                         style={[styles.rectangleBtn, { backgroundColor: '#f7d308ff' }]}
                         onPress={() => {
@@ -103,7 +100,7 @@ export default function ChooseRoom() {
                     >
                         <Text style={[styles.rectangleBtnText]}>+</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <View style={styles.footerRow}>
                     <TouchableOpacity
                         style={[styles.btn, { width: '100%', backgroundColor: selected ? '#f7d308ff' : '#999' }]}

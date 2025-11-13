@@ -1,14 +1,15 @@
 // DEVELOPMENT SERVER
-export const API_URL = 'http://192.168.1.105:3000/api/public';
+// export const API_URL = 'http://192.168.1.105:3000/api/public';
 
 // PRODUCTION SERVER
-// export const API_URL = 'https://uat.power9inter.com/api/public';
+export const API_URL = 'https://uat.power9inter.com/api/public';
 
 
 
 
 
 export const STORAGE_KEYS = {
+    CONTACT_USER_LINK: 'CONTACT_USER_LINK',
     LAST_DRAW_DATE: 'LAST_DRAW_DATE',
     LAST_DRAW_RESULT: 'LAST_DRAW_RESULT',
     LOCATION: 'LOCATION',

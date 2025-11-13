@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
-export function drawDateISO() {
+export function getDrawDateStringInISOFormat() {
     const d = new Date();
     d.setDate(d.getDate() + 1);
     const yyyy = d.getFullYear();
@@ -14,38 +14,37 @@ export function drawDateISO() {
 }
 
 
-export async function fetchVersion() {
-    const res = await fetch(`${API_URL}/pookie/version`);
-    if (!res.ok) throw new Error('Failed to fetch version');
-    const json = await res.json();
-    return json;
+export async function fetchInfo() : Promise<Response> {
+    const res = await fetch(`${API_URL}/pookie/info`);
+    // if (!res.ok) throw new Error('Failed to fetch version');
+    // const json = await res.json();
+    return res;
 }
 
 
-export async function fetchLocations() {
+export async function fetchLocations() : Promise<Response> {
     const res = await fetch(`${API_URL}/pookie/locations`);
-    if (!res.ok) throw new Error('Failed to fetch rooms');
-    const json = await res.json();
-    return json;
+    // if (!res.ok) throw new Error('Failed to fetch rooms');
+    // const json = await res.json();
+    return res;
 }
 
 
-export async function fetchRooms(location: string) {
-    const date = drawDateISO();
+export async function fetchRooms(location: string) : Promise<Response> {
+    const date = getDrawDateStringInISOFormat();
     const res = await fetch(`${API_URL}/pookie/roomnames?location=${location}&drawDate=${encodeURIComponent(date)}`);
-    if (!res.ok) throw new Error('Failed to fetch rooms');
-    const json = await res.json();
-    return json;
+    // if (!res.ok) throw new Error('Failed to fetch rooms');
+    // const json = await res.json();
+    return res;
 }
 
 
-export async function callDrawApi(location: string, roomsCsv: string, noOfPeople: number) {
-    const date = drawDateISO();
+export async function callDrawApi(location: string, roomsCsv: string, noOfPeople: number) : Promise<Response> {
+    const date = getDrawDateStringInISOFormat();
     const res = await fetch(API_URL + `/pookie/draw?location=${location}&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}&noOfPeople=${noOfPeople}`);
-    // Some servers expect POST; if your backend expects POST change accordingly.
-    if (!res.ok) throw new Error('Draw failed');
-    const json = await res.json();
-    return json; // expected { rooms:string, time: string, hole: string }
+    // const json = await res.json();
+    // if (!res.ok) throw new Error(json?.data?.message ?? 'Draw failed');
+    return res; // expected { rooms:string, time: string, hole: string }
 }
 
 

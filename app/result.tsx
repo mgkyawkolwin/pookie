@@ -1,6 +1,6 @@
 import LoadingOverlay from '@/components/loadingoverlay';
 import { STORAGE_KEYS } from '@/constants/constants';
-import { callDrawApi, drawDateISO } from '@/lib/utilities';
+import { callDrawApi, getDrawDateStringInISOFormat } from '@/lib/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageBackground } from 'expo-image';
 import React, { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Linking,
   StyleSheet,
   Text,
   View
@@ -38,10 +39,12 @@ export default function ExplodeScreen() {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [contactUrl, setContactUrl] = useState("");
 
 
   useEffect(() => {
     (async () => {
+      setContactUrl(await AsyncStorage.getItem(STORAGE_KEYS.CONTACT_USER_LINK) ?? "");
       performDraw();
       return;
     })();
@@ -71,15 +74,24 @@ export default function ExplodeScreen() {
       const location = await AsyncStorage.getItem(STORAGE_KEYS.LOCATION);
       const noOfPlayer = Number(await AsyncStorage.getItem(STORAGE_KEYS.NO_OF_PLAYERS));
       const response = await callDrawApi(location ?? '', rooms ?? '', noOfPlayer);
+      const data = await response.json();
+      if (!response.ok) {
+        setLoading(false);
+        Alert.alert(data?.message ?? "알 수 없는 이유로 추첨에 실패했습니다.");
+        return;
+      }
+
+
       // Save the draw result & date
-      await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_DATE, drawDateISO());
-      const result = response?.data?.timeTable;
+      await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_DATE, getDrawDateStringInISOFormat());
+      const result = data?.data?.timeTable;
       await AsyncStorage.setItem(STORAGE_KEYS.LAST_DRAW_RESULT, JSON.stringify(result));
       setLoading(false);
       drawAnimation();
       setResult(result);
 
     } catch (e: any) {
+      setLoading(false);
       Alert.alert('Error', e.message || 'Unable to draw', undefined, { cancelable: true });
     }
   };
@@ -106,6 +118,13 @@ export default function ExplodeScreen() {
           <Text style={styles.resultText}>Room (s): {result?.rooms}</Text>
           <Text style={[styles.text, { paddingTop: 50 }]}>내일 오전 라운하실 때, 이 티켓을 직원에게 보여주시고 라운딩 시작하시면 됩니다. 즐거운 라운딩 되시길 바랍니다. 감사합니다.</Text>
         </View>
+        <Text>도움이 필요하신가요?</Text>
+        <Text
+          style={{ color: '#1DA1F2', textDecorationLine: 'underline' }}
+          onPress={() => Linking.openURL(contactUrl)}
+        >
+          지원팀에 문의하세요.
+        </Text>
 
         <View style={StyleSheet.absoluteFill}>
           {particles.map(p => (

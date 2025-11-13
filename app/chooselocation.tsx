@@ -10,8 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import LoadingOverlay from '@/components/loadingoverlay';
-import { API_URL, STORAGE_KEYS } from '@/constants/constants';
+import { STORAGE_KEYS } from '@/constants/constants';
 import { styles } from "@/lib/styles";
+import { fetchLocations } from '@/lib/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageBackground } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -32,7 +33,7 @@ export default function ChooseLocation() {
         (async () => {
             setLoading(true);
             await new Promise(resolve => setTimeout(resolve, 5000));
-            const response = await fetch(`${API_URL}/pookie/locations`);
+            const response = await fetchLocations();
             if (!response.ok) Alert.alert('Error', '골프 클럽 위치를 가져오는 데 실패했습니다.');
             const responseData = await response.json();
             setList(responseData.data.locations || []);

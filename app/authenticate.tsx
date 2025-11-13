@@ -4,7 +4,8 @@ import { applicationId } from 'expo-application';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Authenticate() {
     const [permission, requestPermission] = useCameraPermissions();
@@ -17,7 +18,7 @@ export default function Authenticate() {
         if (!permission) requestPermission();
     }, [permission]);
 
-    
+
     const handleBarcodeScanned = async ({ data }: { data: string }) => {
         if (scanned) return;
         setScanned(true);
@@ -68,42 +69,38 @@ export default function Authenticate() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>{message}</Text>
-
-            {!scanned ? (
-                <CameraView
-                    style={styles.camera}
-                    facing="back"
-                    barcodeScannerSettings={{
-                        barcodeTypes: ['qr'],
-                    }}
-                    onBarcodeScanned={handleBarcodeScanned}
-                />
-            ) : (
-                <>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => {
-                            setScanned(false);
-                            setMessage('QR 코드를 다시 스캔해 주세요');
+        <SafeAreaView style={styles.container}>
+            <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={styles.header}>{message}</Text>
+                {!scanned ? (
+                    <CameraView
+                        style={styles.camera}
+                        facing="back"
+                        barcodeScannerSettings={{
+                            barcodeTypes: ['qr'],
                         }}
-                    >
-                        <Text style={styles.buttonText}>다시 시도</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-        </View>
+                        onBarcodeScanned={handleBarcodeScanned}
+                    />
+                ) : (
+                    <>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => {
+                                setScanned(false);
+                                setMessage('QR 코드를 다시 스캔해 주세요');
+                            }}
+                        >
+                            <Text style={styles.buttonText}>다시 시도</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
+            </ImageBackground>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#000',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+    container: { flex: 1, margin:0, padding:0, backgroundColor: '#000' },
     header: {
         color: '#fff',
         fontSize: 18,
