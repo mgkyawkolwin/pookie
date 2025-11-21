@@ -75,7 +75,7 @@ export default function ChooseLocation() {
                         disabled={!selectedItem}
                         onPress={() => saveAndProceed()}
                     >
-                        <Text style={styles.btnText}>다음의</Text>
+                        <Text style={styles.btnText}>다음</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground>

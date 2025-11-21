@@ -16,16 +16,12 @@ export function getDrawDateStringInISOFormat() {
 
 export async function fetchInfo() : Promise<Response> {
     const res = await fetch(`${API_URL}/pookie/info`);
-    // if (!res.ok) throw new Error('Failed to fetch version');
-    // const json = await res.json();
     return res;
 }
 
 
 export async function fetchLocations() : Promise<Response> {
     const res = await fetch(`${API_URL}/pookie/locations`);
-    // if (!res.ok) throw new Error('Failed to fetch rooms');
-    // const json = await res.json();
     return res;
 }
 
@@ -33,8 +29,6 @@ export async function fetchLocations() : Promise<Response> {
 export async function fetchRooms(location: string) : Promise<Response> {
     const date = getDrawDateStringInISOFormat();
     const res = await fetch(`${API_URL}/pookie/roomnames?location=${location}&drawDate=${encodeURIComponent(date)}`);
-    // if (!res.ok) throw new Error('Failed to fetch rooms');
-    // const json = await res.json();
     return res;
 }
 
@@ -42,9 +36,7 @@ export async function fetchRooms(location: string) : Promise<Response> {
 export async function callDrawApi(location: string, roomsCsv: string, noOfPeople: number) : Promise<Response> {
     const date = getDrawDateStringInISOFormat();
     const res = await fetch(API_URL + `/pookie/draw?location=${location}&rooms=${encodeURIComponent(roomsCsv)}&drawDate=${encodeURIComponent(date)}&noOfPeople=${noOfPeople}`);
-    // const json = await res.json();
-    // if (!res.ok) throw new Error(json?.data?.message ?? 'Draw failed');
-    return res; // expected { rooms:string, time: string, hole: string }
+    return res;
 }
 
 
@@ -55,9 +47,7 @@ export async function hasLastDrawnResult() {
     }
 
     // there is draw result, check date
-    const today = new Date();
-    let drawDate = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0));
-    drawDate.setUTCDate(drawDate.getUTCDate() + 1);
+    const drawDate = new Date(getDrawDateStringInISOFormat());
     const lastDrawnDate = new Date(JSON.parse(lastResult).date);
 
     if (lastDrawnDate.getTime() === drawDate.getTime()) {

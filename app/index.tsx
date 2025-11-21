@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { API_URL, STORAGE_KEYS } from '@/constants/constants';
-import { fetchInfo } from '@/lib/utilities';
+import { fetchInfo, hasLastDrawnResult } from '@/lib/utilities';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Application from 'expo-application';
+import * as Crypto from 'expo-crypto';
 import { ImageBackground } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Alert, Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-native';
@@ -25,6 +26,9 @@ export default function RoomSelectScreen() {
                 duration: 2000,          // 2 seconds
                 useNativeDriver: true,   // better performance
             }).start();
+
+            // Wait 5 seconds
+            await new Promise(resolve => setTimeout(resolve, 5000));
 
             // validate version
             const currentVer = Application.nativeApplicationVersion;
@@ -62,7 +66,11 @@ export default function RoomSelectScreen() {
             }
 
             try{
-                const deviceId = Application.applicationId ?? '';
+                let deviceId = await AsyncStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+                if(!deviceId){
+                    deviceId = Crypto.randomUUID();
+                    await AsyncStorage.setItem(STORAGE_KEYS.DEVICE_ID, deviceId);
+                }
                 const response = await fetch(
                 `${API_URL}/pookie/authenticate?key=${encodeURIComponent(qrData)}&deviceId=${encodeURIComponent(deviceId)}`
                 );
@@ -80,15 +88,11 @@ export default function RoomSelectScreen() {
                 router.replace('/authenticate');
                 return;
             }
-                
-            router.replace('/chooselocation');
 
-
-
-            // if(await hasLastDrawnResult())
-            //     router.replace('/result');
-            // else
-            //     router.replace('/chooselocation');
+            if(await hasLastDrawnResult())
+                router.replace('/result');
+            else
+                router.replace('/chooselocation');
         })();
     }, []);
 

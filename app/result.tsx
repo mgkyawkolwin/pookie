@@ -118,7 +118,7 @@ export default function ExplodeScreen() {
           <Text style={styles.resultText}>Room (s): {result?.rooms}</Text>
           <Text style={[styles.text, { paddingTop: 50 }]}>내일 오전 라운하실 때, 이 티켓을 직원에게 보여주시고 라운딩 시작하시면 됩니다. 즐거운 라운딩 되시길 바랍니다. 감사합니다.</Text>
         </View>
-        <Text>도움이 필요하신가요?</Text>
+        <Text style={{marginTop: 30, fontWeight: "bold"}}>도움이 필요하신가요?</Text>
         <Text
           style={{ color: '#1DA1F2', textDecorationLine: 'underline' }}
           onPress={() => Linking.openURL(contactUrl)}

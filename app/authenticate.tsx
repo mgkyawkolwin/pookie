@@ -1,7 +1,7 @@
 import { API_URL, STORAGE_KEYS } from '@/constants/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { applicationId } from 'expo-application';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as Crypto from 'expo-crypto';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -25,7 +25,11 @@ export default function Authenticate() {
         setMessage('확인 중...');
 
         try {
-            const deviceId = applicationId ?? '';
+            let deviceId = await AsyncStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+            if(!deviceId){
+                deviceId = Crypto.randomUUID();
+                await AsyncStorage.setItem(STORAGE_KEYS.DEVICE_ID, deviceId);
+            }
 
             const response = await fetch(
                 `${API_URL}/pookie/authenticate?key=${encodeURIComponent(data)}&deviceId=${encodeURIComponent(deviceId)}`

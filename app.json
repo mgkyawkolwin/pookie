@@ -12,7 +12,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.power9inter.Pookie",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "We use your camera to scan QR codes for authentication. You can scan the QR code displayed at the reception counter to securely log in.",
+        "CFBundleDevelopmentRegion": "ko",
+        "CFBundleLocalizations": ["ko"],
+        "CFBundleAllowMixedLocalizations": false
       }
     },
     "android": {
@@ -39,10 +43,7 @@
         "expo-build-properties",
         {
           "android": {
-            "minSdkVersion": 32
-            // "compileSdkVersion": 35,
-            // "targetSdkVersion": 35,
-            // "buildToolsVersion": "35.0.0"
+            "minSdkVersion": 24
           },
           "ios": {
             "deploymentTarget": "15.1"

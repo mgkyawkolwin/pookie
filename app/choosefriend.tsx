@@ -105,7 +105,7 @@ export default function ChooseFriend() {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={styles.header}>함께 라운드를 진행하고 싶은 방 번호와 플레이어 수를 선택해 주세요.</Text>
+                <Text style={styles.header}>함께 조인하고 싶은 방번호하고 인원수를 선택해 주세요</Text>
                 <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "60%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={roomAndPaxs} renderItem={renderItem} keyExtractor={(i) => String(i.roomNo)} />
                 {/* <View style={styles.footerRow}>
                     <TouchableOpacity
@@ -131,13 +131,13 @@ export default function ChooseFriend() {
                         style={[styles.btn, {backgroundColor: "#f7d308ff"}]}
                         onPress={() => playWithFriends()}
                     >
-                        <Text style={styles.btnText}>친구들과 놀다</Text>
+                        <Text style={styles.btnText}>조인 있음</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.btn, {backgroundColor: "#f7d308ff"}]}
                         onPress={() => drawForMyself()}
                     >
-                        <Text style={styles.btnText}>혼자 그리다</Text>
+                        <Text style={styles.btnText}>조인 없음</Text>
                     </TouchableOpacity>
                 </View>
                 <LoadingOverlay visible={loading} />

@@ -80,7 +80,7 @@ export default function ChooseRoom() {
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require('@/assets/images/splash-image.jpg')} style={{ flex: 1, margin: 0, paddingTop: 100, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={styles.header}>객실 번호와 플레이어 수를 선택해 주세요</Text>
+                <Text style={styles.header}>방 번호하고 인원수 선택해 주세요</Text>
                 <FlatList style={{ backgroundColor: 'rgba(255,255,255,0.5)', width: "80%", height: "60%", margin: 20, borderRadius: 20, borderColor: "#000" }} data={roomAndPaxs} renderItem={renderItem} keyExtractor={(i) => String(i.roomNo)} />
                 {/* <View style={styles.footerRow}>
                     <TouchableOpacity
